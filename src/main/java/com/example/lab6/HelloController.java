@@ -20,25 +20,6 @@ import java.util.ArrayList;
 
 public class HelloController {
 
-    private String teacherName;
-    private String teacherSurname;
-
-    public String getTeacherName() {
-        return teacherName;
-    }
-
-    public void setTeacherName(String teacherName) {
-        this.teacherName = teacherName;
-    }
-
-    public String getTeacherSurname() {
-        return teacherSurname;
-    }
-
-    public void setTeacherSurname(String teacherSurname) {
-        this.teacherSurname = teacherSurname;
-        System.out.println(teacherSurname);
-    }
 
     RegistrationSystem dataBank = createDataBank();
 
@@ -50,10 +31,6 @@ public class HelloController {
     @FXML
     private Button chooseTeacher;
 
-    @FXML
-    void chosenStudent(ActionEvent event) {
-
-    }
 
 
     @FXML
@@ -61,6 +38,12 @@ public class HelloController {
 
     @FXML
     private PasswordField loginNameTeacher;
+
+    @FXML
+    private PasswordField loginNameStudent;
+
+    @FXML
+    private PasswordField loginSurnameStudent;
 
     @FXML
     private PasswordField loginSurnameTeacher;
@@ -113,14 +96,21 @@ public class HelloController {
         courseRepository.create(course3);
         teacher3.addCourse(course3);
 
+
         /*Creating an instance of Registration System*/
         RegistrationSystem regSys = new RegistrationSystem(courseRepository.getAll(),
                 studentRepository.getAll(), teacherRepository.getAll());
+
+        regSys.register(courseRepository.getAll().get(0),
+                studentRepository.getAll().get(0));
 
         return regSys;
 
     }
 
+
+    @FXML
+    private Button checkLoginStud;
 
     @FXML
     void actionCheckLogin(ActionEvent event) throws IOException {
@@ -141,8 +131,8 @@ public class HelloController {
         }
 
         if(foundName && foundSurname){
-            setTeacherName(loginNameTeacher.getText());
-            setTeacherSurname(loginSurnameTeacher.getText());
+
+
 
             Stage stage = (Stage) loginSurnameTeacher.getScene().getWindow();
 
@@ -163,6 +153,50 @@ public class HelloController {
             stage.setScene(scene);
             stage.show();
         }
+    }
+
+    @FXML
+    void actionCheckLoginStud(ActionEvent event) throws IOException {
+        boolean foundName=false;
+        boolean foundSurname=false;
+
+        for (int i = 0; i < dataBank.studentList.size(); i++)
+        {
+
+            if(loginNameStudent.getText().equals(dataBank.studentList.get(i).getFirstName())){
+                foundName = true;
+
+            }
+            if (loginSurnameStudent.getText().equals(dataBank.studentList.get(i).getLastName())){
+                foundSurname = true;
+            }
+
+        }
+
+        if(foundName && foundSurname){
+
+
+
+            Stage stage = (Stage) loginSurnameStudent.getScene().getWindow();
+
+            // do what you have to do
+            stage.close();
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("successLoginTeacher.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+            stage.setTitle("Welcome");
+            stage.setScene(scene);
+            stage.show();
+        }
+        else{
+            Stage stage = (Stage) loginSurnameStudent.getScene().getWindow();
+            stage.close();
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("wrongLoginTeacher.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+            stage.setTitle("Wrong login info");
+            stage.setScene(scene);
+            stage.show();
+        }
+
     }
 
     @FXML
@@ -191,6 +225,20 @@ public class HelloController {
 
     }
 
+
+    @FXML
+    void chosenStudent(ActionEvent event) throws IOException {
+        Stage stage = (Stage) chooseTeacher.getScene().getWindow();
+        // do what you have to do
+        stage.close();
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("loginPageStudent.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+        stage.setTitle("Log in");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
     @FXML
     private Button checkEnrolled;
 
@@ -202,11 +250,13 @@ public class HelloController {
         Scene scene = new Scene(fxmlLoader.load(), 600, 400);
         stage.setTitle("Enrolled Students");
         stage.setScene(scene);
+
         stage.show();
         for(int i=0; i<dataBank.teacherList.size(); i++){
-            System.out.println(getTeacherName());
-            if(dataBank.teacherList.get(i).getLastName() == teacherSurname){
-                System.out.println("AAA");
+            if(dataBank.teacherList.get(i).getFirstName().equals("Alex")){
+                for(int j=0; j<dataBank.teacherList.get(i).getCourses().get(0).getStudentsEnrolled().size(); j++)
+                System.out.println(dataBank.teacherList.get(i).getCourses().get(0).getStudentsEnrolled().get(i).getFirstName()+
+                        " "+dataBank.teacherList.get(i).getCourses().get(0).getStudentsEnrolled().get(i).getLastName());
             }
         }
 
